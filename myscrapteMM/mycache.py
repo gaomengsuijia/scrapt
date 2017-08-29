@@ -32,6 +32,7 @@ class Disk_cache(object):
         :return:
         '''
         file_path = self.url_to_path(url)
+        print file_path
         if os.path.exists(file_path):
             try:
                 f  = open(file_path,'rb')
@@ -41,14 +42,16 @@ class Disk_cache(object):
 
             if self.compress:
                 data = zlib.decompress(data)
+
             html, expired_time = pickle.loads(data)
             if self.hasexpired(expired_time):
                 raise KeyError(url + ' has expired')
 
         else:
-            raise OSError(file_path + 'not find')
+            # raise OSError(file_path + 'not find')
+            html =None
 
-
+        print html
         return html
 
 
@@ -116,9 +119,6 @@ class Disk_cache(object):
 
 
 
-
-
-
 if __name__ == "__main__":
 
     cache_dir = BASE_DIR + '\cache\\'
@@ -126,7 +126,6 @@ if __name__ == "__main__":
     mydisk_cache = Disk_cache(cache_dir)
     url = 'http://www.baidu.com/index'
     mydown = Download('http://www.baidu.com')
-    html = mydown.myload()
 
     # mydisk_cache[url]
     # mydisk_cache[url] = html

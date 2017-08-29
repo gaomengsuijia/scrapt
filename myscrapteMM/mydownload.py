@@ -31,6 +31,7 @@ class Download(object):
         result = None
         if self.cache:
             try:
+                print url
                 result = self.cache[url]
             except KeyError as e:
                 pass
@@ -39,27 +40,37 @@ class Download(object):
                     result = None
 
         if result == None:
-            self.delay.wait()
-            result = self.myload()
+            self.delay.wait(url)
+            result = self.myload()['html']
+            print result
             #将结果保存到缓存中
             self.cache[url] = result
+            print result
+
+        return result
 
 
-    def myload(self):
+    def myload(self,data=None):
         '''
         下载html
         :return:
         '''
+        print 'loading %s'%self.url
+        req = urllib2.Request(self.url,data,self.user_head)
         try:
-            html = urllib2.urlopen(self.url).read()
+            response = urllib2.urlopen(req)
+            html = response.read()
+            code = response.code
         except urllib2.URLError as e:
             print 'download erro',e.reason
-            html = None
+            html = ''
             if self.num_retries > 0:
                 if hasattr(e,'code'):
                     code = e.code
                     if 500<e.code<600:
                         self.myload()
+            else:
+                code = None
 
         return {'html':html,'code':code}
 
@@ -68,8 +79,10 @@ class Download(object):
 
 
 if __name__ == "__main__":
-
-    mydown = Download('http://jandan.net/ooxx')
+    cache_dir = BASE_DIR + '\cache\\'
+    print cache_dir
+    mydisk_cache = Disk_cache(cache_dir)
+    mydown = Download('http://jandan.net/ooxx',cache=mydisk_cache)
     ht = mydown.myload()
     links = mydown.get_links(ht)
 

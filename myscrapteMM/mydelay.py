@@ -30,6 +30,7 @@ class Delay(object):
         if last_access_time is not None and self.delay_time>0:
             sleep_secs = self.delay_time - (datetime.datetime.now() - last_access_time).seconds
             if sleep_secs > 0:
+                print 'sleep now'
                 time.sleep(sleep_secs)
 
         #update the last_access_time
