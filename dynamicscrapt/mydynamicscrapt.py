@@ -9,6 +9,7 @@ import csv
 
 
 def dynamic_scrapt(url):
+    print 'loading %s'%url
     return urllib2.urlopen(url).read()
 
 
