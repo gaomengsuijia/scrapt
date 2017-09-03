@@ -10,6 +10,7 @@ import urlparse
 import mymogo_cache
 from mydelay import Delay
 import itertools
+import threading
 
 DEFAULT_AGENT = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'}
 
@@ -122,6 +123,10 @@ if __name__ == "__main__":
         pagenumber -= 1
         for link in get_links(html):
             Delay(4).wait(link)
-            save_img(link)
+            # save_img(link)
+            threading.Thread(target=save_img,args=(link,))
+
+        print 'all down'
+
 
 
