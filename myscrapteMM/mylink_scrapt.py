@@ -126,7 +126,7 @@ if __name__ == "__main__":
             # save_img(link)
             threading.Thread(target=save_img,args=(link,))
 
-        print 'all down'
+        print 'all down ok'
 
 
 
