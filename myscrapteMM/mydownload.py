@@ -1,7 +1,7 @@
 #coding:utf-8
 
 import urllib2
-from mycache import Disk_cache
+from mydiskcache import Disk_cache
 from lxml import etree
 import os,sys
 from mydelay import Delay
@@ -13,8 +13,8 @@ class Download(object):
     '''
     下载html
     '''
-    def __init__(self,url,num_retries=None,user_head=DEFAULT_AGENT,cache=None,delay_time = 3):
-        self.url = url
+    def __init__(self,num_retries=None,user_head=DEFAULT_AGENT,cache=None,delay_time = 3):
+        # self.url = url
         self.num_retries = num_retries
         self.user_head = user_head
         self.cache = cache
@@ -31,7 +31,7 @@ class Download(object):
         result = None
         if self.cache:
             try:
-                print url
+                # print url
                 result = self.cache[url]
             except KeyError as e:
                 pass
@@ -41,22 +41,22 @@ class Download(object):
 
         if result == None:
             self.delay.wait(url)
-            result = self.myload()['html']
-            print result
+            result = self.myload(url)['html']
+            # print result
             #将结果保存到缓存中
             self.cache[url] = result
-            print result
+            # print result
 
         return result
 
 
-    def myload(self,data=None):
+    def myload(self,url,data=None):
         '''
         下载html
         :return:
         '''
-        print 'loading %s'%self.url
-        req = urllib2.Request(self.url,data,self.user_head)
+        print 'loading %s'%url
+        req = urllib2.Request(url,data,self.user_head)
         try:
             response = urllib2.urlopen(req)
             html = response.read()

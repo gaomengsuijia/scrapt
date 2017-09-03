@@ -51,7 +51,7 @@ class Disk_cache(object):
             # raise OSError(file_path + 'not find')
             html =None
 
-        print html
+        # print html
         return html
 
 

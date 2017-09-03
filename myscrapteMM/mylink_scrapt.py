@@ -6,7 +6,8 @@ from mydownload import Download
 import re
 import robotparser
 import urlparse
-import mycache
+# import mydiskcache
+import mymogo_cache
 from mydelay import Delay
 import itertools
 
@@ -74,9 +75,9 @@ def save_img(img_link):
     保存图片
     :return:
     '''
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    # BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     img_name = img_link.split('/')[-1]
-    file_foder = BASE_DIR + '/images/'
+    file_foder = mymogo_cache.BASE_DIR + '/images/'
     if not os.path.exists(file_foder):
         os.mkdir(file_foder)
 
@@ -101,21 +102,26 @@ def get_maxpn(url,cache):
     :param url:
     :return:
     '''
-    ht = Download(url,cache=cache)(url)
+    ht = Download(cache=cache)(url)
     pagenumber = etree.HTML(ht).xpath('//*[@id="comments"]/div[3]/div/span')[0].text
     return pagenumber
 
 
 
 if __name__ == "__main__":
-    cache_dir = mycache.BASE_DIR + '\cache\\'
-    cache = mycache.Disk_cache(cache_dir)
+    # cache_dir = mydiskcache.BASE_DIR + '\cache\\'
+    # cache = mydiskcache.Disk_cache(cache_dir)
+    cache = mymogo_cache.Mogocache()
     url = 'http://jandan.net/ooxx/'
     pagenumber = int(get_maxpn(url,cache).rstrip(']').lstrip('['))
     print pagenumber
-    ht = Download(url, cache=cache)
+    ht = Download(cache=cache)
     while pagenumber>0:
         url_page = '%spage-%s#comments'%(url,str(pagenumber))
-        ht(url_page)
+        html = ht(url_page)
         pagenumber -= 1
+        for link in get_links(html):
+            Delay(4).wait(link)
+            save_img(link)
+
 
